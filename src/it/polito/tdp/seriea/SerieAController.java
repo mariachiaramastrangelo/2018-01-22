@@ -6,6 +6,10 @@ package it.polito.tdp.seriea;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.seriea.model.Model;
+import it.polito.tdp.seriea.model.Stagione;
+import it.polito.tdp.seriea.model.Team;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,7 +25,7 @@ public class SerieAController {
     private URL location;
 
     @FXML // fx:id="boxSquadra"
-    private ChoiceBox<?> boxSquadra; // Value injected by FXMLLoader
+    private ChoiceBox<Team> boxSquadra; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnSelezionaSquadra"
     private Button btnSelezionaSquadra; // Value injected by FXMLLoader
@@ -34,15 +38,21 @@ public class SerieAController {
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
+    
+    private Model model;
 
     @FXML
     void doSelezionaSquadra(ActionEvent event) {
-
+    	for(Stagione s: model.getStagioni(this.boxSquadra.getValue())) {
+    		txtResult.appendText(s.toString()+"\n");
+    	}
     }
 
     @FXML
     void doTrovaAnnataOro(ActionEvent event) {
-
+    	model.creaGrafo(this.boxSquadra.getValue());
+    	txtResult.appendText(model.grafoCreato());
+    	txtResult.appendText(model.annataDoro());
     }
 
     @FXML
@@ -59,4 +69,10 @@ public class SerieAController {
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'SerieA.fxml'.";
 
     }
+
+	public void setModel(Model model) {
+		// TODO Auto-generated method stub
+		this.model= model;
+		this.boxSquadra.getItems().addAll(model.getTeams());
+	}
 }
