@@ -84,39 +84,43 @@ public class Model {
 	public void init() {
 		List<DefaultWeightedEdge> parziale= new ArrayList<DefaultWeightedEdge>() ;
 		camminoMax= new ArrayList<>();
-		
-		camminoPerfetto(parziale, 0);
+		camminoPerfetto(parziale, 1);
 	}
-	private void camminoPerfetto(List<DefaultWeightedEdge> parziale, int inizio) {
+	private void camminoPerfetto(List<DefaultWeightedEdge> parziale, int livello) {
 		//usa la lista delle stagioni per trovare quelle sostiutive
 		
 		if(parziale.size()>camminoMax.size()) {
 			camminoMax= new ArrayList<>(parziale);
 		}
 		
-		for(int i=inizio; i<stagioni.size()-1; i++) {
-			DefaultWeightedEdge ed =grafo.getEdge(stagioni.get(i), stagioni.get(i+1));
-			if(ed!=null && punteggioMigliorato(parziale, ed)) {
-					parziale.add(ed);
-					camminoPerfetto(parziale, i+1);
-					parziale.remove(ed);
-			}
-		}
 		
-	}
-
-	private boolean punteggioMigliorato(List<DefaultWeightedEdge> parziale, DefaultWeightedEdge ed) {
+		//se l'arco c'è il punteggio è già migliore
 		
-		if(parziale.size()==0) {
-			return true;
-		}else if(grafo.getEdgeWeight(parziale.get(parziale.size()-1))< grafo.getEdgeWeight(ed)) {
+		for(DefaultWeightedEdge dwe: grafo.outgoingEdgesOf(stagioni.get(livello-1))) {
 			
-			return true;
-		}else {
-			return false;
-		}
+			if(!parziale.contains(dwe) ) {
+				
+				if(parziale.size()==0) {
+					if(grafo.getEdgeTarget(dwe).equals(stagioni.get(livello))){
+					parziale.add(dwe);
+					camminoPerfetto(parziale, livello);
+					parziale.remove(dwe);
+					}
+				}else {
+				if(grafo.getEdgeTarget(parziale.get(livello-1)).equals(stagioni.get(livello+1)) && grafo.getEdgeTarget(dwe).equals(stagioni.get(livello+1))) {
+				parziale.add(dwe);
+				camminoPerfetto(parziale, livello+1);
+				parziale.remove(dwe);
+			}
+				}
+			}
+			}
 		
 	}
+		
+	
+
+
 	public List<DefaultWeightedEdge> getCamminoMax(){
 		
 		return camminoMax;
