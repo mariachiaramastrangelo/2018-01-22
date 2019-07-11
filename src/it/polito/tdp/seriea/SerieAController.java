@@ -7,6 +7,9 @@ package it.polito.tdp.seriea;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.jgrapht.alg.vertexcover.EdgeBasedTwoApproxVCImpl;
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import it.polito.tdp.seriea.model.Model;
 import it.polito.tdp.seriea.model.Stagione;
 import it.polito.tdp.seriea.model.Team;
@@ -43,6 +46,7 @@ public class SerieAController {
 
     @FXML
     void doSelezionaSquadra(ActionEvent event) {
+    	txtResult.clear();
     	for(Stagione s: model.getStagioni(this.boxSquadra.getValue())) {
     		txtResult.appendText(s.toString()+"\n");
     	}
@@ -50,6 +54,7 @@ public class SerieAController {
 
     @FXML
     void doTrovaAnnataOro(ActionEvent event) {
+    	
     	model.creaGrafo(this.boxSquadra.getValue());
     	txtResult.appendText(model.grafoCreato());
     	txtResult.appendText(model.annataDoro());
@@ -57,7 +62,10 @@ public class SerieAController {
 
     @FXML
     void doTrovaCamminoVirtuoso(ActionEvent event) {
-
+    	model.init();
+    	for(DefaultWeightedEdge de: model.getCamminoMax()) {
+    		txtResult.appendText("\n"+ de.toString());
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
